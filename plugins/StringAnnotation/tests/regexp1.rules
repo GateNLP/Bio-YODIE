@@ -1,0 +1,25 @@
+
+
+// find something within parentheses
+|\([^)]+\)
+0 => Lookup kind="parentheses"
+
+// find a word that starts with an uppercase letter
+|\p{Lu}\p{L}+
+0 => Lookup kind="wordUpperInitial"
+
+// find a word that is all uppercase
+|\p{Lu}+
+0 => Lookup kind="wordAllUpper"
+
+// find a sequence of digits
+|[0-9]+
+0 => Lookup kind="digits"
+
+// find digits with slashes or dots inside
+|[0-9](?:/|\.|[0-9])+[0-9]
+0 => Lookup kind="numericstuff"
+
+// annotate the literl string "word" 
+|word
+0 => Lookup kind="word"

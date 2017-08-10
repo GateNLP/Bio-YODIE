@@ -1,0 +1,52 @@
+/*
+ * cleanAnnie.jape
+ *
+ * Copyright (c) 1995-2016, The University of Sheffield. See the file
+ * COPYRIGHT.txt in the software or at
+ * http://gate.ac.uk/gate/COPYRIGHT.txt
+ *
+ * This file is part of Bio-YODIE (see 
+ * https://gate.ac.uk/applications/bio-yodie.html), and is free 
+ * software, licenced under the GNU Affero General Public License
+ * Version 3, 19 November 2007
+ *
+ * A copy of this licence is included in the distribution in the file
+ * LICENSE-AGPL3.html, and is also available at
+ * http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ *
+ * Danica Damljanovic, 02 March 2012
+ */
+
+phase: RemoveUknownNEs
+Input: Organization Person Location
+options: control = all
+
+
+// remove all annotations with NMRule="Unknown"
+
+Rule:    removeUknownOrganizations
+({Organization.NMRule=="Unknown"}):lookup
+-->
+{
+  gate.AnnotationSet lookup = (gate.AnnotationSet) bindings.get("lookup");
+  gate.Annotation ann = (gate.Annotation) lookup.iterator().next();
+  inputAS.remove(ann);
+}
+
+Rule:    removeUknownPersons
+({Person.NMRule=="Unknown"}):lookup
+-->
+{
+  gate.AnnotationSet lookup = (gate.AnnotationSet) bindings.get("lookup");
+  gate.Annotation ann = (gate.Annotation) lookup.iterator().next();
+  inputAS.remove(ann);
+}
+
+Rule:    removeUknownLocations
+({Location.NMRule=="Unknown"}):lookup
+-->
+{
+  gate.AnnotationSet lookup = (gate.AnnotationSet) bindings.get("lookup");
+  gate.Annotation ann = (gate.Annotation) lookup.iterator().next();
+  inputAS.remove(ann);
+}

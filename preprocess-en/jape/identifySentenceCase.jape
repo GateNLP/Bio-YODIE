@@ -1,0 +1,87 @@
+/*
+ * identifySentenceCase.jape
+ *
+ * Copyright (c) 1995-2016, The University of Sheffield. See the file
+ * COPYRIGHT.txt in the software or at
+ * http://gate.ac.uk/gate/COPYRIGHT.txt
+ *
+ * This file is part of Bio-YODIE (see 
+ * https://gate.ac.uk/applications/bio-yodie.html), and is free 
+ * software, licenced under the GNU Affero General Public License
+ * Version 3, 19 November 2007
+ *
+ * A copy of this licence is included in the distribution in the file
+ * LICENSE-AGPL3.html, and is also available at
+ * http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ *
+ * G. Gorrell, 26 September 2016
+ */
+
+
+Phase: identifySentenceCase
+Input: Sentence
+Options: control=all
+
+Rule: identifySentenceCase
+(
+  {Sentence}
+)
+:sentence
+-->
+{
+  AnnotationSet sentenceas = bindings.get("sentence");  
+  Annotation sentence = sentenceas.iterator().next();
+  long startOffset = sentence.getStartNode().getOffset();
+  long endOffset = sentence.getEndNode().getOffset();
+
+  String sent = null;
+  try {
+    sent = doc.getContent().getContent(startOffset, endOffset).toString();
+  } catch (Exception e){
+    e.printStackTrace();
+  }
+
+  if(sent!=null){
+    char[] sentchars = sent.toCharArray();
+    String[] words = sent.split("[_ \\p{Punct}]+");
+
+    float uppers = 0.001F;
+    float lowers = 0.001F;
+    for(int i=0;i<sentchars.length;i++){
+      if(Character.isLowerCase(sentchars[i])){
+        lowers+=1.0;
+      } else if(Character.isUpperCase(sentchars[i])){
+        uppers+=1.0;
+      }
+    }
+
+    float upperfirsts = 0.001F;
+    float lowerfirsts = 0.001F;
+    for(int i=0;i<words.length;i++){
+      if (words[i]==null || words[i].length()==0){
+        //Skip it
+      } else if(Character.isLowerCase(words[i].charAt(0))){
+        lowerfirsts+=1.0;
+      } else if(Character.isUpperCase(words[i].charAt(0))){
+        upperfirsts+=1.0;
+      }
+    }
+
+    if((uppers/lowers)>5){ //It is predominantly an upper case sentence
+      sentence.getFeatures().put("case","upper");
+    } else if(Character.isUpperCase(sent.charAt(0))){ //Potentially sentence or title case
+      if((upperfirsts/lowerfirsts)>1){ //More upper first letters than lower so let's guess title case
+        sentence.getFeatures().put("case","title");
+      } else { //More lower than upper first letters so let's guess sentence case
+        sentence.getFeatures().put("case","sentence");
+      }
+    } else if(Character.isLowerCase(sent.charAt(0))){
+      if((lowers/uppers)>5){ //It is predominantly a lower case sentence
+        sentence.getFeatures().put("case","lower");
+      } else {
+        sentence.getFeatures().put("case","anomalous");
+      }
+    }
+  }
+}
+

@@ -1,0 +1,47 @@
+/*
+ * log-features.jape
+ *
+ * Copyright (c) 1995-2016, The University of Sheffield. See the file
+ * COPYRIGHT.txt in the software or at
+ * http://gate.ac.uk/gate/COPYRIGHT.txt
+ *
+ * This file is part of Bio-YODIE (see 
+ * https://gate.ac.uk/applications/bio-yodie.html), and is free 
+ * software, licenced under the GNU Affero General Public License
+ * Version 3, 19 November 2007
+ *
+ * A copy of this licence is included in the distribution in the file
+ * LICENSE-AGPL3.html, and is also available at
+ * http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ *
+ * G. Gorrell, 26 September 2016
+ */
+
+Phase: logFeatures
+Input: Lookup
+Options: control=all
+
+// For ML disambiguation we have feature ranking, feature normalization etc
+// but for simple mix disambiguation we don't have that, so for a quick
+// solution to the Mesh frequency feat dominating the others, we'll just make a 
+// log feature to cut it down to size a bit.
+
+Rule: logFeatures
+(
+ {Lookup}
+)
+:match
+-->
+{
+ Annotation match = bindings.get("match").iterator().next();
+ FeatureMap fm = match.getFeatures();
+ if(fm.get("scMeshFreq")!=null && !fm.get("scMeshFreq").toString().equals("") && !fm.get("scMeshFreq").toString().equals("null")){
+  double meshFreq = ((Integer)fm.get("scMeshFreq")).doubleValue();
+  double logMeshFreq = Math.log10(meshFreq);
+  fm.put("scMeshFreqLog", new Double(logMeshFreq));
+ } else {
+  fm.put("scMeshFreqLog", 0.0);
+ }
+}
+
+

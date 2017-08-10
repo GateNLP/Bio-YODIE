@@ -1,0 +1,59 @@
+/*
+ * removeContainedLookups.jape
+ *
+ * Copyright (c) 1995-2016, The University of Sheffield. See the file
+ * COPYRIGHT.txt in the software or at
+ * http://gate.ac.uk/gate/COPYRIGHT.txt
+ *
+ * This file is part of Bio-YODIE (see 
+ * https://gate.ac.uk/applications/bio-yodie.html), and is free 
+ * software, licenced under the GNU Affero General Public License
+ * Version 3, 19 November 2007
+ *
+ * A copy of this licence is included in the distribution in the file
+ * LICENSE-AGPL3.html, and is also available at
+ * http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ *
+ * G. Gorrell, 26 September 2016
+ */
+
+// This will remove Lookup annotations which are fully contained in a longer
+// Lookup. All the Lookups here are still without inst feature, they are 
+// the candidates which will be used to query by string and create lookups
+// for each matching row later on.
+// TODO: eventually we may want to have exceptions here, e.g. when 
+// the Lookup overlaps with a Location, we may want to not remove contained
+// lookups so that "Exeter, UK" can be split into two separate annotations.
+
+
+Phase: removeContainedLookups
+Input: Lookup
+Options: control = appelt
+
+// NOTE: this will remove fully contained lookups but not lookups which
+// overlap, e.g.
+//    xxxxxx xxxx
+//        xxx   xxxxxx
+// We also remove exactly coextensive lookups
+
+Rule: removeContainedLookups_01
+({Lookup}):label
+-->
+:label{ 
+  Annotation lookup = gate.Utils.getOnlyAnn(labelAnnots);
+  AnnotationSet containeds = gate.Utils.getContainedAnnotations(inputAS,lookup,"Lookup");
+  int len = gate.Utils.length(lookup);
+  
+  for(Annotation contained : containeds) {
+    // if(gate.Utils.length(contained) < len) {  // for fully contained lookups
+    // CAUTION: with control = all, all lookups get deleted because the one
+    // that just has been deleted is still matched, causing the other one to get deleted!
+    if(contained.getId() != lookup.getId()) { // also delete co-extensive lookups
+      outputAS.get(gate.Utils.addAnn(outputAS,contained,contained.getType(),contained.getFeatures())).
+        getFeatures().put("deletedBecause","LookupWithinLookup");
+      inputAS.remove(contained);
+    } 
+  }
+  
+}
+

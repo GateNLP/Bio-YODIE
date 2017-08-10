@@ -1,0 +1,51 @@
+/*
+ * removeLookups.jape
+ *
+ * Copyright (c) 1995-2016, The University of Sheffield. See the file
+ * COPYRIGHT.txt in the software or at
+ * http://gate.ac.uk/gate/COPYRIGHT.txt
+ *
+ * This file is part of Bio-YODIE (see 
+ * https://gate.ac.uk/applications/bio-yodie.html), and is free 
+ * software, licenced under the GNU Affero General Public License
+ * Version 3, 19 November 2007
+ *
+ * A copy of this licence is included in the distribution in the file
+ * LICENSE-AGPL3.html, and is also available at
+ * http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ *
+ * G. Gorrell, 26 September 2016
+ */
+
+// This will remove Lookup annotations which overlap with ANNIE 
+// Date or ANNIE URL (Address.kind = url)
+// The deleted Lookups are actually copied into the outputAS for debugging.
+
+// NOTE: this removes the lookups from the inputAS, moves them to the outputAS
+// and expects the ANNIE annotations to be in the inputAS, so relevant 
+// ANNIE annotations have to get copied from the original set, if necessary!
+
+
+// This removes Lookups, Location, Organization annotations if they overlap with an 
+// ANNIE date or a URL. The ANNIE Date and Address annotations need to get copied
+// to the inputAS unless already there!
+Phase: removeLookupsUnderDateAndURL
+Input: Address Date 
+Options: control = appelt
+
+Rule: removeLookupsUnderDateAndURL_01
+( {Address.kind==url} | {Date}):m
+-->
+{
+  Annotation a = bindings.get("m").iterator().next();
+  AnnotationSet lookupSet = inputAS.get(gate.Utils.start(a), gate.Utils.end(a)).get("Lookup");
+  for(Annotation aLookup : lookupSet) {
+    outputAS.get(gate.Utils.addAnn(outputAS,aLookup,aLookup.getType(),aLookup.getFeatures())).
+      getFeatures().put("deletedBecause","overlapswWithAddressOrDate");    
+    inputAS.remove(aLookup);
+  }
+
+
+}
+
+

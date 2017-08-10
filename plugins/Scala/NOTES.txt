@@ -1,0 +1,13 @@
+Gateclassloader:
+
+getResource:
+  = try to get it from the parent
+  = if nothing found, try Gate.getClassLoader().findResource(name);
+  = if still nothing: 
+    - get all the childClassLoaders
+    - for each child classloader:
+    - if it is not isolated, try to use it
+    - until we find something, return it
+  = if still nothing, return null
+
+

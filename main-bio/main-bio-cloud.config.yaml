@@ -1,0 +1,333 @@
+###
+### GLOBAL SETTINGS, potentially needed in more than one sub-pipeline
+### 
+
+- set: docfeature
+  name: keyOverlapsOnly
+  value: false
+
+## The following ones *should* already be set for us, but if not, we
+## can set them here:
+
+## language
+# - set: docfeature
+#   name: lang
+#   value: en
+
+## docTypes: generic, tweet  (influences preprocessing and other things)
+- set: docfeature
+  name: docType
+  value: generic
+
+##############################################################################
+####
+#### SUBPIPELINE: preprocess-en
+####
+##############################################################################
+
+## the model to use for the NER tagger in the preprocessing sub pipeline
+## Only leave one value not commented out!
+## NOTE: this is an init parm!!
+## NOTE: the path seems to be relative to the path of the ModularPipelines plugin!!
+#- set: prinit
+#  controller: preprocess-en
+#  prname: StanfordNER
+#  name: modelFile
+#  value: file:/export/data/yodie/yodie-pipeline/plugins/Stanford_CoreNLP/resources/english.conll.4class.distsim.crf.ser.gz
+
+##############################################################################
+###
+### SUBPIPELINE: gazetteer-en
+### 
+##############################################################################
+- set: prparm
+  controller: gazetteer-en
+  prname: ExtGaz2:gazetteer-en:labels
+  name: longestMatchOnly
+  value: true
+#- set: prparm
+#  controller: gazetteer-en
+#  prname: ExtGaz2:misc-en
+#  name: longestMatchOnly
+#  value: false
+
+- set: prrun
+  controller: gazetteer-en
+  prname: ExtGaz2:stopwords
+  value: true
+
+- set: prrun
+  controller: gazetteer-en
+  prname: ExtGaz2:misc-en
+  value: false
+
+- set: prinit
+  controller: gazetteer-en
+  prname: ExtGaz2:gazetteer-en:labels
+  name: configFileURL
+  value: file:/export/data/yodie/yodie-pipeline/bio-yodie-resources/en/gazetteer-en-bio/labels.def
+
+- set: prinit
+  controller: gazetteer-en
+  prname: ExtGaz2:gazetteer-en:labels
+  name: caseSensitive
+  value: false
+
+- set: prinit
+  controller: gazetteer-en
+  prname: ExtGaz2:stopwords
+  name: caseSensitive
+  value: false
+
+##############################################################################
+###
+### SUBPIPELINE: gazetteer-postproc
+###
+##############################################################################
+
+- set: prrun
+  controller: gazetteer-postproc
+  prname: JdbcLookup:countMentionsNoCase
+  value: false
+## Even though we don't run the above, it still complains if it can't find the DB
+- set: prinit
+  controller: gazetteer-postproc
+  prname: JdbcLookup:countMentionsNoCase
+  name: dbDirectoryUrl
+  value: file:/export/data/yodie/yodie-pipeline/bio-yodie-resources/databases
+- set: prrun
+  controller: gazetteer-postproc
+  prname: Transfer:Annie2GazetteerEN
+  value: false
+- set: prrun
+  controller: gazetteer-postproc
+  prname: JAPE:filterLookupsByPOS
+  value: false
+- set: prrun
+  controller: gazetteer-postproc
+  prname: JAPE:filterLookupsSpurious
+  value: false
+- set: prrun
+  controller: gazetteer-postproc
+  prname: Java:filterByNER
+  value: false
+- set: prrun
+  controller: gazetteer-postproc
+  prname: Java:filterByNERSet
+  value: false
+- set: prrun
+  controller: gazetteer-postproc
+  prname: JAPE:removeLookups
+  value: false
+- set: prrun
+  controller: gazetteer-postproc
+  prname: JAPE:removeLookupsUnderDateAddress
+  value: true
+- set: prrun
+  controller: gazetteer-postproc
+  prname: JAPE:removeContainedLookups
+  value: true
+- set: prrun
+  controller: gazetteer-postproc
+  prname: JAPE:removeStopWords
+  value: true
+- set: prrun
+  controller: gazetteer-postproc
+  prname: Reset:AnnieFromGazetteerEN
+  value: false
+
+
+##############################################################################
+###
+### SUBPIPELINE: lookupinfo
+###
+##############################################################################
+
+## Copy the LookupList annotation right after the have been created,
+## merged and features have been added
+- set: prrun
+  controller: lookupinfo
+  prname: Java:copyListAnns
+  value: false
+
+## Location of the labels database
+- set: prinit
+  controller: lookupinfo
+  prname: JdbcJsonLookup:lookupinfo
+  name: dbDirectoryUrl
+  value: file:/export/data/yodie/yodie-pipeline/bio-yodie-resources/en/databases/
+
+- set: prparm
+  controller: lookupinfo
+  prname: JdbcJsonLookup:lookupinfo
+  name: keyFeature
+  value: string
+
+##############################################################################
+###
+### SUBPIPELINE: scoring-bio
+###
+##############################################################################
+
+  
+- set: prrun
+  controller: scoring-bio
+  prname: StructuralSimilarity
+  value: false
+
+## Turn off all S-Space use due to unsolved problem with temp files
+- set: prrun
+  controller: scoring-bio
+  prname: VectSim:AbstractsTFIDF500000new
+  value: false
+#- set: prparm
+#  controller: scoring-bio
+#  prname: TFICFSim:Abstracts
+#  name: useSSpace
+#  value: false
+- set: prrun
+  controller: scoring-bio
+  prname: TFICFSim:Abstracts
+  value: false
+
+## Turn off UKB PR--use server instead (params below)
+#- set: prrun
+#  controller: scoring-bio
+#  prname: GraphSimilarityPR
+#  value: false
+
+# IR - changed port number for UKB service to point to docker container
+- set: prparm
+  controller: scoring-bio
+  prname: GraphSimilarityPR
+  name: ukbServiceURL
+  value: http://localhost:40123/exec
+
+## We will normalize candidate lists over coref chains. Pool candidates from
+## top n spans. What should n be?
+- set: prparm
+  controller: scoring-bio
+  prname: CorefRationalization
+  name: candNormalizationSpanSetSize
+  value: 2
+
+## If a candidate is rejected from a coref chain for not being on one of the
+## top n spans, should it be deleted or merely flagged?
+- set: prparm
+  controller: scoring-bio
+  prname: CorefRationalization
+  name: flagOrDelete
+  value: FLAG
+
+## Use coref at all?
+- set: prparm
+  controller: scoring-bio
+  prname: CorefRationalization
+  name: useCoref
+  value: false
+
+
+##Not doing Struct Sim for now
+## Context window in characters
+#- set: prparm
+#  controller: scoring-bio
+#  prname: StructuralSimilarity
+#  name: contextChars
+#  value: 200
+
+##############################################################################
+###
+### SUBPIPELINE: disambiguation-simple
+###
+##############################################################################
+- set: propset
+  name: lodie.disambiguation-simple.simple-disamb.featureName
+  value: scMeshFreq
+- set: propset
+  name: lodie.disambiguation-simple.simple-disamb.minScore
+  value: -1
+- set: propset
+  name: lodie.disambiguation-simple.mix-disamb.minScore
+  value: -1
+- set: propset
+  name: lodie.disambiguation-simple.simple-disamb.createNilMentions
+  value: true
+
+- set: propset
+  name: lodie.disambiguation-simple.mix-disamb.featureNames
+  value: scMeshFreqLog, scPageRank, scStructSimV2Combined, scContextualSimilarityTFICFSimple
+
+- set: propset
+  name: lodie.disambiguation-simple.mix-disamb.featureWeights
+  value: 1.0, 1.0, 1.0, 1.0
+
+- set: prrun
+  controller: disambiguation-simple
+  prname: Java:simple-disamb
+  value: false
+
+- set: prrun
+  controller: disambiguation-simple
+  prname: Java:mix-disamb
+  value: true
+
+- set: prrun
+  controller: disambiguation-simple
+  prname: JAPE:fix-urls
+  value: false
+
+##############################################################################
+###
+### SUBPIPELINE: disambiguation-libsvm
+###
+##############################################################################
+
+## Settings for the disambiguation-libsvm pipeline
+
+- set: propset
+  name: lodie.disambiguation-ml-training.coextensiveOnly
+  value: true
+
+## Set the libsvm parameters as described at http://www.csie.ntu.edu.tw/~cjlin/libsvm/ 
+- set: prparm
+  controller: disambiguation-ml-training
+  prname: LF:LibSVM-training
+  name: learnerParams
+  value: "-c 2000.0 -b 1"
+## Save directory for training is where to save the model to.
+- set: prparm
+  controller: disambiguation-ml-training
+  prname: LF:LibSVM-training
+  name: saveDirectory
+  value: "file:/export/data/yodie/yodie-pipeline/disambiguation-libsvm"
+## Save directory for application is where to load the model from.
+- set: prparm
+  controller: disambiguation-ml-application
+  prname: LF:LibSVM-application
+  name: saveDirectory
+  value: "file:/export/data/yodie/yodie-pipeline/disambiguation-libsvm"
+## Feature spec URL is where to load the feature spec config from.
+- set: prparm
+  controller: disambiguation-ml-training
+  prname: LF:LibSVM-training
+  name: featureSpecURL
+  value: "file:/export/data/yodie/yodie-pipeline/disambiguation-libsvm/feature-spec.xml"
+- set: prparm
+  controller: disambiguation-ml-application
+  prname: LF:LibSVM-application
+  name: featureSpecURL
+  value: "file:/export/data/yodie/yodie-pipeline/disambiguation-libsvm/feature-spec.xml"
+  
+#- set: propset
+#  name: lodie.disambiguation-libsvm.SelectBestCandidate.confidenceThreshold
+#  value: 0.0
+#- set: propset
+#  name: lodie.disambiguation-libsvm.SelectBestCandidate.frequencyThreshold
+#  value: 1000
+#- set: propset
+#  name: lodie.disambiguation-libsvm.SelectBestCandidate.frequencyFeature
+#  value: "scUriFreqInWp"
+#- set: propset
+#  name: lodie.disambiguation-libsvm.SelectBestCandidate.commonnessThreshold
+#  value: 5
+

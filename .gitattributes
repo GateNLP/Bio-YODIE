@@ -1,0 +1,7 @@
+*.finf binary -delta
+*.zip binary -delta
+*.pdf binary -delta
+*.svm binary -delta
+*.gz binary -delta
+*.bz2 binary -delta
+*.jar binary -delta

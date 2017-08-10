@@ -1,0 +1,120 @@
+BioYODIE is a named entity recognition and disambiguation system that identifies
+various types of biomedical named entities in text and attempts to link them
+to the most appropriate concept label in the
+<a href="https://www.nlm.nih.gov/research/umls/">UMLS</a>.
+
+<p><button class="btn btn-info" data-toggle="collapse" data-target="#ldAnnotationDetails"><i class="icon-info-sign icon-white"></i> Annotation details</button></p>
+
+<div class="collapse clearfix" id="ldAnnotationDetails">
+<table>
+  <tr>
+    <td colspan="2"><b>Default annotations</b></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Drug</tt></td>
+    <td rowspan="6">Named entity mentions grouped into broad types, with <tt>class</tt> and <tt>inst</tt> features where available.</td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Disease</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Anatomy</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Investigation</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Care</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Observation</tt></td>
+  </tr>
+  <tr>
+    <td colspan="2"><b>Additional annotations available if selected</b></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Mention</tt></td>
+    <td>Any named entity annotation with UMLS <tt>class</tt> and <tt>inst</tt> features</td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Body_Location_or_Region</tt></td>
+    <td rowspan="26">Specific types of entities corresponding to the top-level TUI classifications in UMLS. Every instance of one of these types will correspond to a <tt>Mention</tt> but there may be other mentions that are not under these TUIs.</td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Body_Part_Organ_or_Organ_Component</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Body_Space_or_Junction</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Body_System</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Tissue</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Anatomical_Abnormality</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Acquired_Abnormality</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Congenital_Abnormality</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Finding</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Injury_or_Poisoning</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Pathologic_Function</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Disease_or_Syndrome</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Mental_or_Behavioral_Dysfunction</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Mental_Process</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Cell_or_Molecular_Dysfunction</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Experimental_Model_of_Disease</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Sign_or_Symptom</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Neoplastic_Process</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Diagnostic_Procedure</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Laboratory_Procedure</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Laboratory_or_Test_Result</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Research_Activity</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Molecular_Biology_Research_Technique</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Clinical_Drug</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Pharmacologic_Substance</tt></td>
+  </tr>
+  <tr>
+    <td><tt>Bio:Antibiotic</tt></td>
+  </tr>
+</table>
+</div>
+

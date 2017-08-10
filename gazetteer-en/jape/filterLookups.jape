@@ -1,0 +1,71 @@
+/*
+ * filterLookups.jape
+ *
+ * Copyright (c) 1995-2016, The University of Sheffield. See the file
+ * COPYRIGHT.txt in the software or at
+ * http://gate.ac.uk/gate/COPYRIGHT.txt
+ *
+ * This file is part of Bio-YODIE (see 
+ * https://gate.ac.uk/applications/bio-yodie.html), and is free 
+ * software, licenced under the GNU Affero General Public License
+ * Version 3, 19 November 2007
+ *
+ * A copy of this licence is included in the distribution in the file
+ * LICENSE-AGPL3.html, and is also available at
+ * http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ *
+ * G. Gorrell, 26 September 2016
+ */
+
+
+
+Phase: filterLookups
+Input: Lookup
+Options: control = all
+
+Rule: filterLookups_R01
+({Lookup}):label
+-->
+:label{
+  Annotation lookup = gate.Utils.getOnlyAnn(labelAnnots);
+  
+  AnnotationSet sentenceSet = 
+    doc.getAnnotations().getCovering("Sentence", gate.Utils.start(lookup), gate.Utils.end(lookup));
+  if(sentenceSet.isEmpty()) { 
+    outputAS.get(gate.Utils.addAnn(outputAS,lookup,lookup.getType(),lookup.getFeatures())).getFeatures().put("deletedBecause","notInSentence");
+    inputAS.remove(lookup); 
+    return; 
+  }
+
+  // delete annotations only one characer long
+  // TODO: should not include such labels in the gazetteer in the first place: -> filter in preparation!!
+  if(gate.Utils.stringFor(doc, lookup).length() == 1) { 
+    outputAS.get(gate.Utils.addAnn(outputAS,lookup,lookup.getType(),lookup.getFeatures())).getFeatures().put("deletedBecause","length=1");
+    inputAS.remove(lookup);
+    return; 
+  }
+
+  // Remove Lookup annotation unless they contain at least one token that 
+  // has a POS category that starts with NNP (NNP or NNPS) or is marked as isProperNoun
+  // This is done only if the document feature deleteNonNNPLookups is true, which is 
+  // decided by the preprocessing pipeline
+  // TODO: maybe get rid of this document feature as we now will always do this?
+  String truefalse = (String)doc.getFeatures().get("deleteNonNNPLookups");
+  if(truefalse == null) { truefalse = "true"; }
+  if(truefalse.equals("true")) {
+    AnnotationSet tokens = doc.getAnnotations().getContained(gate.Utils.start(lookup), gate.Utils.end(lookup)).get("Token");
+    boolean shouldDelete = true;
+    for(Annotation token : tokens) {
+      String cat = (String) token.getFeatures().get("category");
+      Boolean isProperNoun = (Boolean)token.getFeatures().get("isProperNoun");
+      if(isProperNoun == null) { isProperNoun = false; }
+      if(isProperNoun || cat.startsWith("NNP") ) { shouldDelete = false; break; }
+    }
+    if(shouldDelete) {
+      outputAS.get(gate.Utils.addAnn(outputAS,lookup,lookup.getType(),lookup.getFeatures())).getFeatures().put("deletedBecause","noNNPorNNPS");
+      inputAS.remove(lookup);
+    }
+  }
+ 
+  
+}  

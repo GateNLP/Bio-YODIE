@@ -1,0 +1,99 @@
+/*
+ * filterLookupsByPOS.jape
+ *
+ * Copyright (c) 1995-2016, The University of Sheffield. See the file
+ * COPYRIGHT.txt in the software or at
+ * http://gate.ac.uk/gate/COPYRIGHT.txt
+ *
+ * This file is part of Bio-YODIE (see 
+ * https://gate.ac.uk/applications/bio-yodie.html), and is free 
+ * software, licenced under the GNU Affero General Public License
+ * Version 3, 19 November 2007
+ *
+ * A copy of this licence is included in the distribution in the file
+ * LICENSE-AGPL3.html, and is also available at
+ * http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ *
+ * G. Gorrell, 26 September 2016
+ */
+
+
+// Filter dbpedia lookup annotations that do not contain at least one Token with 
+// a POS tag that indicates a proper Noun. These annotations are the ones generated
+// from dbpedia. At the moment all the other annotations that may be there 
+// are not filtered by POS tag (country adjectivals and demonyms)
+
+// NOTE: annotations are not really removed but moved to the output annotation set!
+
+// HOWEVER: we do not filter the country demonym/adjectival matches by pos tag!
+//   - NOTE: country demonym/adjectival lookups which are coextensive with 
+//     a normal lookup are currently removed in this JAPE to avoid getting 
+//     two lookupList annotations for the same span with the same candidates
+
+// UPDATE: if the system property lodie.gazetteer-postproc.filterLookupByPOS.ne-set is set
+// to a comma seperated list of annoation set names, then any annotation in any of
+// those sets being contained (overlapped) will prevent the removal of the Lookup
+
+Phase: filterLookupsByPos
+Input: Lookup
+Options: control = all
+
+Rule: filterLookupsByPOS_R01
+({Lookup.majorType=="dbpedia"}):label
+-->
+:label{
+  Annotation lookup = gate.Utils.getOnlyAnn(labelAnnots);
+  
+  // Remove Lookup annotation unless they contain at least one token that 
+  // has a POS category that starts with NNP (NNP or NNPS) or is marked as isProperNoun
+  // This is done only if the document feature deleteNonNNPLookups is true, which is 
+  // decided by the preprocessing pipeline
+  // TODO: maybe get rid of this document feature as we now will always do this?
+  
+  String truefalse = (String)doc.getFeatures().get("deleteNonNNPLookups");  
+  if(truefalse == null) { truefalse = "true"; }
+  if(truefalse.equals("true")) {
+  
+    String neSet = System.getProperty("lodie.gazetteer-postproc.filterLookupByPOS.ne-set");
+    if(neSet != null) {
+      String[] setnames = neSet.split(";");
+      boolean haveOverlapping = false;
+      for(String setname : setnames) {
+        AnnotationSet overlapping = gate.Utils.getContainedAnnotations(doc.getAnnotations(setname),lookup);
+        // now filter out all the overlapping ones which are not coextensive
+        Iterator<Annotation> it = overlapping.iterator();
+        while(it.hasNext()) {
+          Annotation ne = it.next();
+          if(!ne.coextensive(lookup)) {
+            it.remove();
+          }
+        }
+        //System.out.println("Got annotations for "+gate.Utils.stringFor(doc,lookup)+" from "+setname+": "+overlapping.size());
+        if(overlapping.size() > 0) {
+          haveOverlapping = true;
+          break;
+        }
+      }
+      if(!haveOverlapping) {
+        //System.out.println("Removing!!!");
+        outputAS.get(gate.Utils.addAnn(outputAS,lookup,lookup.getType(),lookup.getFeatures())).getFeatures().put("deletedBecause","notInEntitySet");
+        inputAS.remove(lookup);
+      }
+    } else {
+      AnnotationSet tokens = doc.getAnnotations().getContained(gate.Utils.start(lookup), gate.Utils.end(lookup)).get("Token");
+      boolean shouldDelete = true;
+      for(Annotation token : tokens) {
+        String cat = (String) token.getFeatures().get("category");
+        Boolean isProperNoun = (Boolean)token.getFeatures().get("isProperNoun");
+        if(isProperNoun == null) { isProperNoun = false; }
+       if(isProperNoun || cat.startsWith("NNP") ) { shouldDelete = false; break; }
+      }
+      if(shouldDelete) {
+        outputAS.get(gate.Utils.addAnn(outputAS,lookup,lookup.getType(),lookup.getFeatures())).getFeatures().put("deletedBecause","notNNPorNNPS");
+        inputAS.remove(lookup);
+      }
+    }
+  }
+}  
+
+

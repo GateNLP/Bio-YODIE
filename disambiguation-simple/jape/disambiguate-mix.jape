@@ -1,0 +1,101 @@
+/*
+ * disambiguate-mix.jape
+ *
+ * Copyright (c) 1995-2016, The University of Sheffield. See the file
+ * COPYRIGHT.txt in the software or at
+ * http://gate.ac.uk/gate/COPYRIGHT.txt
+ *
+ * This file is part of Bio-YODIE (see 
+ * https://gate.ac.uk/applications/bio-yodie.html), and is free 
+ * software, licenced under the GNU Affero General Public License
+ * Version 3, 19 November 2007
+ *
+ * A copy of this licence is included in the distribution in the file
+ * LICENSE-AGPL3.html, and is also available at
+ * http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ *
+ * G. Gorrell, 26 September 2016
+ */
+
+Phase: disambiguate
+Input: Lookup
+Options: control=all
+
+
+Rule: disambiguate
+(
+  {Lookup}
+):match
+-->
+{
+  Annotation thislookup = bindings.get("match").iterator().next();
+  AnnotationSet lookups = doc.getAnnotations().get("Lookup");
+  AnnotationSet mentions = outputAS.get("Mention");
+
+  long start = thislookup.getStartNode().getOffset();
+  long end = thislookup.getEndNode().getOffset();
+
+  Annotation outputMention = null;
+  AnnotationSet outputMentions = mentions.get(start, end);
+  if(outputMentions!=null && outputMentions.size()>0){
+    //We did this span already
+  } else {
+    AnnotationSet candidates = lookups.get(start, end); //the candidate list
+    Annotation bestsofar = null;
+    double bestaggregatescoresofar = 0.0F;
+    Annotation mostpopularcandidate = null;
+    double popularityofmostpopularcandidate = 0.0F;
+    double popofcurrent = 0.0F;
+    
+    //Compete the candidates
+    for(Annotation lookup : candidates){
+
+      float score = 0.0F;
+      if (lookup.getFeatures().get("stringSimilarityBestLabelRank")!=null) {
+        score += 1.0 * (float)lookup.getFeatures().get("stringSimilarityBestLabelRank");
+      }
+      if (lookup.getFeatures().get("structSimV2CombinedRank")!=null) {
+        score += 1.0 * (float)lookup.getFeatures().get("structSimV2CombinedRank");
+      }
+      if (lookup.getFeatures().get("contextualSimilarityVectorRank")!=null) {
+        score += 1.0 * (float)lookup.getFeatures().get("contextualSimilarityVectorRank");
+      }
+      if (lookup.getFeatures().get("contextualSimilarityRDFDirectRank")!=null) {
+        score += 1.0 * (float)lookup.getFeatures().get("contextualSimilarityRDFDirectRank");
+      }
+      if (lookup.getFeatures().get("contextualSimilarityRDFIndirectRank")!=null) {
+        score += 1.0 * (float)lookup.getFeatures().get("contextualSimilarityRDFIndirectRank");
+      }
+
+      double candidatepop = 0.0F;
+      if (lookup.getFeatures().get("relUriFreqByLabelInWp")!=null){
+        candidatepop = (double)lookup.getFeatures().get("relUriFreqByLabelInWp");
+      }
+
+          
+      if(score>bestaggregatescoresofar || bestsofar==null || (score==bestaggregatescoresofar && candidatepop>popofcurrent)){
+        bestsofar = lookup;
+        bestaggregatescoresofar = score;
+        popofcurrent = candidatepop;
+      }
+
+
+      
+      if(candidatepop>popularityofmostpopularcandidate || mostpopularcandidate==null){
+        mostpopularcandidate = lookup;
+        popularityofmostpopularcandidate = candidatepop;
+      }
+
+      lookup.getFeatures().put("aggregateScore", bestaggregatescoresofar);
+    }
+
+    if(bestsofar!=null && bestaggregatescoresofar>0.4){
+      gate.Utils.addAnn(outputAS, bestsofar, "Mention", bestsofar.getFeatures());
+    } else if (mostpopularcandidate!=null){
+      gate.Utils.addAnn(outputAS, mostpopularcandidate, "Mention", mostpopularcandidate.getFeatures());
+    }
+
+  } //End of mention loop
+
+}
+

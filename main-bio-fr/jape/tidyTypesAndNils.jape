@@ -1,0 +1,71 @@
+/*
+ * tidyTypesAndNils.jape
+ *
+ * Copyright (c) 1995-2016, The University of Sheffield. See the file
+ * COPYRIGHT.txt in the software or at
+ * http://gate.ac.uk/gate/COPYRIGHT.txt
+ *
+ * This file is part of Bio-YODIE (see 
+ * https://gate.ac.uk/applications/bio-yodie.html), and is free 
+ * software, licenced under the GNU Affero General Public License
+ * Version 3, 19 November 2007
+ *
+ * A copy of this licence is included in the distribution in the file
+ * LICENSE-AGPL3.html, and is also available at
+ * http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ *
+ * G. Gorrell, 26 September 2016
+ */
+
+
+// Remove entities of types we aren't interested in and anything
+// with no CUI (found earlier to be a nil).
+
+Phase: tidyTypesAndNils
+Input: Mention
+Options: control = all
+
+Rule: tidyTypesAndNils
+({Mention}):label
+-->
+:label{
+
+  String[] goodTypes = new String[]{
+    "Body Location or Region",
+    "Body Part, Organ, or Organ Component",
+    "Body Space or Junction",
+    "Body System",
+    "Tissue",
+    "Anatomical Abnormality",
+    "Acquired Abnormality",
+    "Congenital Abnormality",
+    "Finding",
+    "Injury or Poisoning",
+    "Pathologic Function",
+    "Disease or Syndrome",
+    "Mental or Behavioral Dysfunction",
+    "Mental Process",
+    "Cell or Molecular Dysfunction",
+    "Experimental Model of Disease",
+    "Sign or Symptom",
+    "Neoplastic Process",
+    "Diagnostic Procedure",
+    "Laboratory Procedure",
+    "Laboratory or Test Result",
+    "Research Activity",
+    "Molecular Biology Research Technique",
+    "Clinical Drug",
+    "Pharmacologic Substance",
+    "Antibiotic"
+  };
+
+  Annotation mention = gate.Utils.getOnlyAnn(labelAnnots);
+  FeatureMap fm = mention.getFeatures();
+  if(fm.get("inst")==null || fm.get("inst").toString().equals("")){
+    gate.Utils.addAnn(outputAS, mention, "Mention", fm);
+    inputAS.remove(mention);
+  } else if(!Arrays.asList(goodTypes).contains(fm.get("STY"))){
+    gate.Utils.addAnn(outputAS, mention, "Mention", fm);
+    inputAS.remove(mention);
+  }
+}

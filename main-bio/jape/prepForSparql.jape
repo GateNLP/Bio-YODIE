@@ -1,0 +1,129 @@
+/*
+ * prepForSparql.jape
+ *
+ * Copyright (c) 1995-2016, The University of Sheffield. See the file
+ * COPYRIGHT.txt in the software or at
+ * http://gate.ac.uk/gate/COPYRIGHT.txt
+ *
+ * This file is part of Bio-YODIE (see 
+ * https://gate.ac.uk/applications/bio-yodie.html), and is free 
+ * software, licenced under the GNU Affero General Public License
+ * Version 3, 19 November 2007
+ *
+ * A copy of this licence is included in the distribution in the file
+ * LICENSE-AGPL3.html, and is also available at
+ * http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ *
+ * G. Gorrell, 26 September 2016
+ */
+
+
+// Add features required to look things up from this in the Ontotext
+// sparql endpoint.
+
+Phase: prepForSparql
+Input: Mention
+Options: control = all
+
+Rule: prepForSparql
+({Mention}):m
+-->
+:m{
+
+  Annotation mention = gate.Utils.getOnlyAnn(mAnnots);
+  FeatureMap fm = mention.getFeatures();
+  fm.put("inst_full", "http://linkedlifedata.com/resource/umls/id/" + fm.get("inst"));
+  fm.put("tui_full", "http://linkedlifedata.com/resource/semanticnetwork/id/" + fm.get("TUI"));
+
+  //Make type annotations
+  String sty = fm.get("STY").toString();
+  //WordUtils.capitalize(sty);
+  sty = sty.replaceAll(",\\s","_");
+  sty = sty.trim().replaceAll("\\s+","_");
+  String[] stys = sty.split(",");
+  HashSet<String> uniquestys = new HashSet<String>();
+  for(String st:stys){
+    uniquestys.add(st);
+  }
+  for(String st:uniquestys) {
+    FeatureMap newfm = Factory.newFeatureMap();
+    newfm.putAll(fm);
+    gate.Utils.addAnn(outputAS, mention, st, newfm);
+  }
+
+  //Make Khresmoi type annotations
+  Set<String> anatomy = new HashSet<String>();
+  anatomy.add("Body Location or Region");
+  anatomy.add("Body Part, Organ, or Organ Component");
+  anatomy.add("Body Space or Junction");
+  anatomy.add("Body System");
+  anatomy.add("Tissue");
+  anatomy.add("Anatomical Abnormality");
+  anatomy.add("Acquired Abnormality");
+  anatomy.add("Congenital Abnormality");
+  anatomy.add("Anatomical Structure");
+
+  Set<String> disease = new HashSet<String>();
+  disease.add("Injury or Poisoning");
+  disease.add("Pathologic Function");
+  disease.add("Disease or Syndrome");
+  disease.add("Mental or Behavioral Dysfunction");
+  disease.add("Cell or Molecular Dysfunction");
+  disease.add("Experimental Model of Disease");
+  disease.add("Sign or Symptom");
+  disease.add("Neoplastic Process");
+
+  Set<String> investigation = new HashSet<String>();
+  investigation.add("Diagnostic Procedure");
+  investigation.add("Laboratory Procedure");
+  investigation.add("Laboratory or Test Result");
+  investigation.add("Research Activity");
+  investigation.add("Molecular Biology Research Technique");
+
+  Set<String> drug = new HashSet<String>();
+  drug.add("Clinical Drug");
+  drug.add("Pharmacologic Substance");
+  drug.add("Antibiotic");
+
+  Set<String> care = new HashSet<String>();
+  care.add("Health Care Activity");
+  care.add("Health Care Related Organization");
+  care.add("Self-help or Relief Organization");
+  care.add("Therapeutic or Preventive Procedure");
+
+  Set<String> observation = new HashSet<String>();
+  observation.add("Finding");
+  observation.add("Clinical Attribute");
+  observation.add("Individual Behavior");
+  observation.add("Population Group");
+  observation.add("Patient or Disabled Group");
+
+
+  String[] styk = fm.get("STY").toString().split(",");
+  FeatureMap newfmk = Factory.newFeatureMap();
+  newfmk.putAll(fm);
+  for(String st : styk){
+    if(anatomy.contains(st)){
+      gate.Utils.addAnn(outputAS, mention, "Anatomy", newfmk);
+    } else if(disease.contains(st)){
+      gate.Utils.addAnn(outputAS, mention, "Disease", newfmk);
+    } else if(investigation.contains(st)){
+      gate.Utils.addAnn(outputAS, mention, "Investigation", newfmk);
+    } else if(drug.contains(st)){
+      gate.Utils.addAnn(outputAS, mention, "Drug", newfmk);
+    } else if(care.contains(st)){
+      gate.Utils.addAnn(outputAS, mention, "Care", newfmk);
+    } else if(observation.contains(st)){
+      gate.Utils.addAnn(outputAS, mention, "Observation", newfmk);
+    }
+  }
+  
+  //Make vocab annotations
+  String vocabs = fm.get("VOCABS").toString();
+  String[] vs = vocabs.split(",");
+  for(int i=0;i<vs.length;i++){
+    FeatureMap anothernewfm = Factory.newFeatureMap();
+    anothernewfm.put("vocab", vs[i]);
+    gate.Utils.addAnn(outputAS, mention, "Vocabulary", anothernewfm);
+  }
+}

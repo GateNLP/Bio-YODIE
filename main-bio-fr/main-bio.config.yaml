@@ -1,0 +1,21 @@
+###
+### GLOBAL SETTINGS, potentially needed in more than one sub-pipeline
+### 
+
+- set: docfeature
+  name: keyOverlapsOnly
+  value: false
+
+## The following ones *should* already be set for us, but if not, we
+## can set them here:
+
+## language
+# - set: docfeature
+#   name: lang
+#   value: en
+
+## docTypes: generic, tweet  (influences preprocessing and other things)
+- set: docfeature
+  name: docType
+  value: generic
+

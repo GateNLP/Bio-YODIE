@@ -1,0 +1,48 @@
+# temporary files and backup files
+*~
+*.swp
+*.bak
+*.tmp
+
+tmp/
+tmp*
+
+logs/
+*.log
+
+debug*/*
+
+# build/compile output we do not want checked in
+*.class
+
+# Note: for now we do not ignore jar files!
+
+# Virtual machine crash logs
+hs_err_pid*
+
+# IDE files will not get checked in, mainly Eclipse cruft ..
+.project
+.metadata
+.classpath
+.settings/
+.loadpath
+.externalToolBuilders/
+.launch
+.RData
+.Rhistory
+
+
+# yodie-specific stuff to ignore
+*.gazbin
+/bio-yodie-resources
+/bio-yodie-resources/*
+/*.config.yaml
+compilePlugins.log
+docs*/*
+log4j.properties
+debug1.out/
+unit-tests/d1.*
+unit-tests/debug1
+unit-tests/out
+*.tsv
+

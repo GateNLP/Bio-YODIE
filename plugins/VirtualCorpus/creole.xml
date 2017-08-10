@@ -1,0 +1,12 @@
+<CREOLE-DIRECTORY 
+  ID="com.jpetrak.VirtualCorpus" 
+  VERSION="0.14" 
+  DESCRIPTION="Virtual Corpus LRs for directories or JDBC databases"
+  HELPURL="http://code.google.com/p/gateplugin-virtualcorpus/"
+>
+  <JAR SCAN="true">VirtualCorpus.jar</JAR>
+  <JAR>lib/mysql-connector-java-5.1.13-bin.jar</JAR>
+  <JAR>lib/sqlitejdbc-v056.jar</JAR>
+  <JAR>lib/postgresql-9.0-801.jdbc4.jar</JAR>
+  <JAR>lib/commons-io-1.4.jar</JAR>
+</CREOLE-DIRECTORY>

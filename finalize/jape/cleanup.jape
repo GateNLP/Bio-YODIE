@@ -1,0 +1,45 @@
+/*
+ * cleanup.jape
+ *
+ * Copyright (c) 1995-2016, The University of Sheffield. See the file
+ * COPYRIGHT.txt in the software or at
+ * http://gate.ac.uk/gate/COPYRIGHT.txt
+ *
+ * This file is part of Bio-YODIE (see 
+ * https://gate.ac.uk/applications/bio-yodie.html), and is free 
+ * software, licenced under the GNU Affero General Public License
+ * Version 3, 19 November 2007
+ *
+ * A copy of this licence is included in the distribution in the file
+ * LICENSE-AGPL3.html, and is also available at
+ * http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ *
+ * G. Gorrell, 26 September 2016
+ */
+
+
+Phase: cleanup
+Input: Mention
+Options: control = all
+
+Rule: cleanup1
+({Mention}):m
+-->
+:m{
+
+  Annotation mention = gate.Utils.getOnlyAnn(mAnnots);
+  FeatureMap fm = mention.getFeatures();
+  FeatureMap newfm = Factory.newFeatureMap();
+  newfm.put("Experiencer", fm.get("Experiencer"));
+  newfm.put("Negation", fm.get("Negation"));
+  newfm.put("PREF", fm.get("PREF"));
+  newfm.put("STY", fm.get("STY"));
+  newfm.put("TUI", fm.get("TUI"));
+  newfm.put("Temporality", fm.get("Temporality"));
+  newfm.put("LABELVOCABS", fm.get("LABELVOCABS"));
+  newfm.put("CUIVOCABS", fm.get("CUIVOCABS"));
+  newfm.put("inst", fm.get("inst"));
+  newfm.put("language", fm.get("language"));
+  newfm.put("string_orig", fm.get("string_orig"));
+  mention.setFeatures(newfm);
+}

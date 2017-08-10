@@ -1,0 +1,177 @@
+<project name="StringAnnotationGithub" default="jar" basedir=".">
+  <description>
+    String Annotation Plugin
+  </description>
+
+  <property environment="env"/> 
+  <property file="build.properties" />
+  <property name="src" location="src"/>
+  <property name="build" location="build"/>
+  <property name="jar.location" location="StringAnnotation.jar" />
+  <property name="javadoc.dir" location="doc/javadoc" />
+  <property name="virtualdocuments.lib" location="lib/VirtualDocuments.jar" />
+
+  <condition property="gate.home" value="${env.GATE_HOME}">
+    <isset property="env.GATE_HOME"/>
+  </condition>
+
+  <property name="gate.home" location="../.." />
+  <property name="gate.jar" location="${gate.home}/bin/gate.jar" />
+  <property name="gate.lib" location="${gate.home}/lib" />
+
+  <path id="compile.classpath">
+    <pathelement location="${gate.jar}" />
+    <fileset dir="lib">
+     <include name="**/*.jar" />
+      <include name="**/*.zip" />
+    </fileset>
+    <fileset dir="${gate.lib}" >
+      <include name="**/*.jar" />
+      <include name="**/*.zip" />
+    </fileset>
+    <pathelement location="${virtualdocuments.lib}" />
+  </path>
+
+  <target name="checkgate" if="gate.home">
+  </target>
+
+  <target name="init" depends="checkgate">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+  </target>
+
+  <target name="compile" depends="init"
+        description="compile the source " >
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac srcdir="${src}" destdir="${build}" 
+           debuglevel="lines,source" 
+           debug="true"
+           target="1.7"
+           source="1.7"
+           deprecation="true"
+           classpathref="compile.classpath">
+      <!-- <compilerarg compiler="javac1.5" line="-Xlint:unchecked"/> -->
+    </javac>
+  </target>
+
+  <target name="jar" depends="compile"
+        description="generate the distribution" >
+    <jar jarfile="${jar.location}" basedir="${build}"/>
+    <delete dir="${build}"/>
+  </target>
+
+  <target name="clean.classes"
+        description="clean up" >
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+
+  <target name="clean" depends="clean.classes" >
+    <!-- full clean also removes the generated JAR file -->
+    <delete file="${jar.location}" />
+  </target>
+
+  <target name="javadoc" description="create documentation">
+    <mkdir dir="${javadoc.dir}" />
+    <javadoc destdir="${javadoc.dir}" packagenames="*">
+      <sourcepath>
+        <pathelement location="${src}" />
+      </sourcepath>
+      <classpath refid="compile.classpath" />
+    </javadoc>
+  </target>
+  <target name="doc" depends="javadoc" description="create documentation">
+  </target> 
+
+  <target name="dist" depends="jar,javadoc" />
+ 
+  <target name="tests" depends="jar,test1,test2,test3,testJRA1"/> 
+  <!-- <target name="tests" depends="jar,testJRA1"/> -->
+
+  <target name="test1" depends="jar">
+    <junit fork="true" showoutput="yes" printsummary="yes">
+      <classpath>
+        <pathelement location="${jar.location}" />
+        <path refid="compile.classpath" />
+      </classpath>
+      <sysproperty key="java.awt.headless" value="true" />
+      <formatter type="xml" />
+      <test name="com.jpetrak.gate.stringannotation.tests.Tests1" />
+    </junit>
+    <junitreport>
+      <fileset dir=".">
+        <include name="TEST-*.xml" />
+      </fileset>
+      <report todir="." format="noframes" />
+    </junitreport>
+  </target>
+
+  <target name="test2" depends="jar">
+    <junit fork="true" showoutput="yes" printsummary="yes" maxmemory="2500M">
+      <classpath>
+        <pathelement location="${jar.location}" />
+        <path refid="compile.classpath" />
+      </classpath>
+      <sysproperty key="java.awt.headless" value="true" />
+      <formatter type="xml" />
+      <test name="com.jpetrak.gate.stringannotation.tests.Tests2" />
+    </junit>
+    <junitreport>
+      <fileset dir=".">
+        <include name="TEST-*.xml" />
+      </fileset>
+      <report todir="." format="noframes" />
+    </junitreport>
+  </target>
+
+  <target name="test3" depends="jar">
+    <junit fork="true" showoutput="yes" printsummary="yes" maxmemory="2500M">
+      <classpath>
+        <pathelement location="${jar.location}" />
+        <path refid="compile.classpath" />
+      </classpath>
+      <sysproperty key="java.awt.headless" value="true" />
+      <formatter type="xml" />
+      <test name="com.jpetrak.gate.stringannotation.tests.Tests3" />
+    </junit>
+    <junitreport>
+      <fileset dir=".">
+        <include name="TEST-*.xml" />
+      </fileset>
+      <report todir="." format="noframes" />
+    </junitreport>
+  </target>
+
+  <target name="testJRA1" depends="jar">
+    <junit fork="true" showoutput="yes" printsummary="yes" maxmemory="2500M">
+      <classpath>
+        <pathelement location="${jar.location}" />
+        <path refid="compile.classpath" />
+      </classpath>
+      <sysproperty key="java.awt.headless" value="true" />
+      <formatter type="xml" />
+      <test name="com.jpetrak.gate.stringannotation.tests.TestJavaRegexpAnnotator1" />
+    </junit>
+    <junitreport>
+      <fileset dir=".">
+        <include name="TEST-*.xml" />
+      </fileset>
+      <report todir="." format="noframes" />
+    </junitreport>
+  </target>
+
+
+
+
+  <!-- Targets used by the main GATE build file 
+       Only needed if this plugin gets included in the GATE plugins set
+  -->
+  <target name="all" depends="dist" />
+  <target name="build" depends="jar" />
+  <target name="test" />
+  <target name="distro.prepare" depends="clean.classes" />
+</project>
+

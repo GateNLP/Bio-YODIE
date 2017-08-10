@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<CREOLE-DIRECTORY 
+  ID="com.jpetrak.StringAnnotation" 
+  VERSION="3.1" 
+  DESCRIPTION="Extended Gazetteer, Java Regular Expression Annotator"
+  HELPURL="http://github.com/johann-petrak/gateplugin-stringannotation/wiki"
+>
+  <JAR scan="true">StringAnnotation.jar</JAR>
+  <JAR>lib/commons-cli-1.2.jar</JAR>
+  <JAR>lib/fastutil-6.5.4.jar</JAR>
+  <JAR>lib/commons-io-2.4.jar</JAR>
+  <JAR>lib/snakeyaml-1.11.jar</JAR>
+  <JAR>lib/commons-lang3-3.2.1.jar</JAR>  
+</CREOLE-DIRECTORY>

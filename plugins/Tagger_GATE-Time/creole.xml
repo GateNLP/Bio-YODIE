@@ -1,0 +1,6 @@
+
+<CREOLE-DIRECTORY>
+  <JAR SCAN="true">gate-time.jar</JAR>
+  <JAR>lib/de.unihd.dbs.heideltime.standalone.jar</JAR>
+  <JAR>lib/uima-core.jar</JAR>
+</CREOLE-DIRECTORY>

@@ -1,0 +1,29 @@
+Phase:	CheckPOS
+Input: EVENT
+Options: control = appelt
+
+/* removes EVENT annotation if it's not a Verb */
+
+Rule: Verb
+
+/* if an EVENT annotation is on a Token that's a Verb, do nothing */
+
+(
+ {EVENT}
+):tag
+-->
+:tag
+{
+   AnnotationSet tokens = gate.Utils.getContainedAnnotations(inputAS, tagAnnots, "Token");
+   for (Annotation token : tokens) {
+       FeatureMap fm = token.getFeatures();
+       if (fm.containsKey("category") &&
+           fm.get("category").toString().startsWith("V") ) 
+	{
+          break;
+        }
+	outputAS.removeAll(tagAnnots);
+}
+
+   }
+

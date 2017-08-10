@@ -1,0 +1,48 @@
+/*
+ * removeLookupsUnderDateAddressForBio.jape
+ *
+ * Copyright (c) 1995-2016, The University of Sheffield. See the file
+ * COPYRIGHT.txt in the software or at
+ * http://gate.ac.uk/gate/COPYRIGHT.txt
+ *
+ * This file is part of Bio-YODIE (see 
+ * https://gate.ac.uk/applications/bio-yodie.html), and is free 
+ * software, licenced under the GNU Affero General Public License
+ * Version 3, 19 November 2007
+ *
+ * A copy of this licence is included in the distribution in the file
+ * LICENSE-AGPL3.html, and is also available at
+ * http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ *
+ * G. Gorrell, 26 September 2016
+ */
+
+// This will remove Lookup annotations which overlap with ANNIE 
+// Date or ANNIE Address.
+// The deleted Lookups are actually copied into the outputAS for debugging.
+// In the bio domain we aren't interested in spotting things in addresses
+// because they are always spurious. Relevant medical concepts don't get
+// mentioned in addresses.
+// Note that at this stage in the app, the lookups are in GazetteerEN 
+// (hardcoded here).
+
+Phase: removeLookupsUnderDateAddress
+Input: Address Date 
+Options: control = appelt
+
+Rule: removeLookupsUnderDateAddress_01
+( {Address} | {Date}):m
+-->
+{
+  Annotation a = bindings.get("m").iterator().next();
+  AnnotationSet lookupSet = gate.Utils.getOverlappingAnnotations(doc.getAnnotations("GazetteerEN"), a, "Lookup");
+  for(Annotation aLookup : lookupSet) {
+    outputAS.get(gate.Utils.addAnn(outputAS,aLookup,aLookup.getType(),aLookup.getFeatures())).
+      getFeatures().put("deletedBecause","overlapswWithAddressOrDate");    
+    doc.getAnnotations("GazetteerEN").remove(aLookup);
+  }
+
+
+}
+
+

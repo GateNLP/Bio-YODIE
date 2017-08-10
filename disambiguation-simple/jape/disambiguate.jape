@@ -1,0 +1,71 @@
+/*
+ * disambiguate.jape
+ *
+ * Copyright (c) 1995-2016, The University of Sheffield. See the file
+ * COPYRIGHT.txt in the software or at
+ * http://gate.ac.uk/gate/COPYRIGHT.txt
+ *
+ * This file is part of Bio-YODIE (see 
+ * https://gate.ac.uk/applications/bio-yodie.html), and is free 
+ * software, licenced under the GNU Affero General Public License
+ * Version 3, 19 November 2007
+ *
+ * A copy of this licence is included in the distribution in the file
+ * LICENSE-AGPL3.html, and is also available at
+ * http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ *
+ * G. Gorrell, 26 September 2016
+ */
+
+Phase: disambiguate
+Input: Lookup
+Options: control=all
+
+
+Rule: disambiguate
+(
+  {Lookup}
+):match
+-->
+{
+  Annotation thislookup = bindings.get("match").iterator().next();
+  AnnotationSet lookups = doc.getAnnotations().get("Lookup");
+  AnnotationSet mentions = outputAS.get("Mention");
+
+  long start = thislookup.getStartNode().getOffset();
+  long end = thislookup.getEndNode().getOffset();
+
+  Annotation outputMention = null;
+  AnnotationSet outputMentions = mentions.get(start, end);
+  if(outputMentions!=null && outputMentions.size()>0){
+    //We did this span already
+  } else {
+    AnnotationSet candidates = lookups.get(start, end);
+    Annotation mostpopularcandidate = null;
+    double popularityofmostpopularcandidate = 0.0F;
+    
+    //Compete the candidates
+    for(Annotation lookup : candidates){
+
+      double candidatepop = 0.0F;
+      if (lookup.getFeatures().get("relUriFreqByLabelInWp")!=null){
+        candidatepop = (double)lookup.getFeatures().get("relUriFreqByLabelInWp");
+      }
+
+         
+      if(candidatepop>popularityofmostpopularcandidate || mostpopularcandidate==null){
+        mostpopularcandidate = lookup;
+        popularityofmostpopularcandidate = candidatepop;
+      }
+
+    }
+
+    if(mostpopularcandidate!=null && popularityofmostpopularcandidate>0.05){
+      gate.Utils.addAnn(outputAS, mostpopularcandidate, "Mention", mostpopularcandidate.getFeatures());
+    } else {
+      gate.Utils.addAnn(outputAS, thislookup, "Mention", gate.Utils.featureMap("inst",""));
+    }
+
+  } //End of mention loop
+
+}

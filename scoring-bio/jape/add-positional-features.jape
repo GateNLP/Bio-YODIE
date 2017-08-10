@@ -1,0 +1,67 @@
+/*
+ * add-positional-features.jape
+ *
+ * Copyright (c) 1995-2016, The University of Sheffield. See the file
+ * COPYRIGHT.txt in the software or at
+ * http://gate.ac.uk/gate/COPYRIGHT.txt
+ *
+ * This file is part of Bio-YODIE (see 
+ * https://gate.ac.uk/applications/bio-yodie.html), and is free 
+ * software, licenced under the GNU Affero General Public License
+ * Version 3, 19 November 2007
+ *
+ * A copy of this licence is included in the distribution in the file
+ * LICENSE-AGPL3.html, and is also available at
+ * http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ *
+ * G. Gorrell, 26 September 2016
+ */
+
+Phase: addPositionalFeatures
+Input: Lookup
+Options: control=all
+
+
+Rule: addPositionalFeatures
+(
+  {Lookup}
+):match
+-->
+{
+  Annotation lu = bindings.get("match").iterator().next();
+  
+  List<Annotation> precedingTokens = inputAS.getContained(0L, lu.getStartNode().getOffset())
+      .get("Token").inDocumentOrder();
+
+  FeatureMap fm = lu.getFeatures();
+
+  if(precedingTokens.size()>0){
+   Annotation minusOneToken = precedingTokens.get(precedingTokens.size()-1);
+   fm.put("minusOneTokenPOS", minusOneToken.getFeatures().get("category"));
+   fm.put("minusOneTokenString", minusOneToken.getFeatures().get("string"));
+  }
+
+  if(precedingTokens.size()>1){
+   Annotation minusTwoToken = precedingTokens.get(precedingTokens.size()-2);
+   fm.put("minusTwoTokenPOS", minusTwoToken.getFeatures().get("category"));
+   fm.put("minusTwoTokenString", minusTwoToken.getFeatures().get("string"));
+  }
+
+  if(precedingTokens.size()>2){
+   Annotation minusThreeToken = precedingTokens.get(precedingTokens.size()-3);
+   fm.put("minusThreeTokenPOS", minusThreeToken.getFeatures().get("category"));
+   fm.put("minusThreeTokenString", minusThreeToken.getFeatures().get("string"));
+  }
+
+  if(precedingTokens.size()>3){
+   Annotation minusFourToken = precedingTokens.get(precedingTokens.size()-4);
+   fm.put("minusFourTokenPOS", minusFourToken.getFeatures().get("category"));
+   fm.put("minusFourTokenString", minusFourToken.getFeatures().get("string"));
+  }
+
+  if(precedingTokens.size()>4){
+   Annotation minusFiveToken = precedingTokens.get(precedingTokens.size()-3);
+   fm.put("minusFiveTokenPOS", minusFiveToken.getFeatures().get("category"));
+   fm.put("minusFiveTokenString", minusFiveToken.getFeatures().get("string"));
+  }
+}

@@ -1,0 +1,20 @@
+some	inst=i1
+text	inst=i2
+text	inst=i3
+text	inst=i3
+text	inst=i4
+and	inst=i5
+AND	inst=i6
+word	inst=i7	case=lower
+WORD	inst=i8	case=upper
+words	inst=i9
+otherwordstoo	inst=i10
+word and	inst=i11
+rd an	inst=i12
+me te	inst=i13
+pre	inst=i4b
+prefi	inst=i5b
+prefix	inst=i6b
+text	inst=i3
+preblabla	inst=i7b
+t	inst=i8

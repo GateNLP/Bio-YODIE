@@ -1,0 +1,8 @@
+183 #numTrainingDocs
+14 #numClasses
+70197 #numNullLabelInstances
+7200672 #totalFeatures
+/Users/diana/gate-extras/arcomem/resources/machine-events/savedFiles/learnedModels.save #modelFile
+PAUM #learnerName
+null #learnerExecutable
+-p 50 -n 5 -optB 0.3 #learnerParams

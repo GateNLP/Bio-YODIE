@@ -1,0 +1,67 @@
+/*
+ * truncate-options.jape
+ *
+ * Copyright (c) 1995-2016, The University of Sheffield. See the file
+ * COPYRIGHT.txt in the software or at
+ * http://gate.ac.uk/gate/COPYRIGHT.txt
+ *
+ * This file is part of Bio-YODIE (see 
+ * https://gate.ac.uk/applications/bio-yodie.html), and is free 
+ * software, licenced under the GNU Affero General Public License
+ * Version 3, 19 November 2007
+ *
+ * A copy of this licence is included in the distribution in the file
+ * LICENSE-AGPL3.html, and is also available at
+ * http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ *
+ * G. Gorrell, 26 September 2016
+ */
+
+
+// More than 6 candidates don't show up well in the annotation tool.
+
+Phase: truncateOptions
+Input: LookupList
+Options: control = all
+
+Rule: truncateOptions
+({LookupList}):ls
+-->
+:ls{
+  Annotation lookuplist = gate.Utils.getOnlyAnn(lsAnnots);
+  AnnotationSet candidates = gate.Utils.getCoextensiveAnnotations(inputAS, lookuplist, "Lookup");
+  
+  //First make sure that if we have duplicate preflabels, we keep only the lowest CUI
+  HashMap<String, Annotation> bestcands = new HashMap<String, Annotation>();
+  Iterator candit = candidates.iterator();
+  while(candit.hasNext()){
+    Annotation cand = (Annotation)candit.next();
+    Annotation bestsofar = bestcands.get(cand.getFeatures().get("readable"));
+
+    if(bestsofar==null){
+      bestcands.put(cand.getFeatures().get("readable").toString(), cand);
+    } else {
+      int candcuinum = Integer.parseInt(cand.getFeatures().get("inst").toString().substring(1,8));
+      int bestsofarcuinum = Integer.parseInt(bestsofar.getFeatures().get("inst").toString().substring(1,8));
+      if(candcuinum<bestsofarcuinum){
+        //new one has a lower cui
+        bestcands.put(cand.getFeatures().get("readable").toString(), cand);
+        inputAS.remove(bestsofar);
+      } else {
+        inputAS.remove(cand);
+      }
+    }
+  }
+
+  //Now just reduce the list to max 6
+  AnnotationSet remainingcandidates = gate.Utils.getCoextensiveAnnotations(inputAS, lookuplist, "Lookup");
+  if(remainingcandidates.size()>6){
+   int toRemove = remainingcandidates.size()-6;
+   ArrayList candList = new ArrayList();
+   candList.addAll(remainingcandidates);
+   for(int i=0;i<toRemove;i++){
+    Annotation cand = (Annotation)candList.get(i);
+    inputAS.remove(cand);
+   }
+  } 
+}

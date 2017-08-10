@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<metadata xmlns="http://gate.ac.uk/ns/pipeline-metadata">
+  <pipeline-name>BioYODIE Named Entity Disambiguation</pipeline-name>
+  <slug>bio-yodie</slug>
+  <ordering>10</ordering>
+  <annotation-selectors>Bio:Drug, Bio:Disease, Bio:Anatomy, Bio:Investigation, Bio:Care, Bio:Observation</annotation-selectors>
+  <additional-annotations>Bio:Mention, Bio:Body_Location_or_Region, Bio:Body_Part_Organ_or_Organ_Component, Bio:Body_Space_or_Junction, Bio:Body_System, Bio:Tissue, Bio:Anatomical_Abnormality, Bio:Acquired_Abnormality, Bio:Congenital_Abnormality, Bio:Finding, Bio:Injury_or_Poisoning, Bio:Pathologic_Function, Bio:Disease_or_Syndrome, Bio:Mental_or_Behavioral_Dysfunction, Bio:Mental_Process, Bio:Cell_or_Molecular_Dysfunction, Bio:Experimental_Model_of_Disease, Bio:Sign_or_Symptom, Bio:Neoplastic_Process, Bio:Diagnostic_Procedure, Bio:Laboratory_Procedure, Bio:Laboratory_or_Test_Result, Bio:Research_Activity, Bio:Molecular_Biology_Research_Technique, Bio:Clinical_Drug, Bio:Pharmacologic_Substance, Bio:Antibiotic</additional-annotations>
+  <tags>
+    <tag>English</tag>
+    <tag>Named Entity</tag>
+    <tag>Biomed</tag>
+  </tags>
+</metadata>

@@ -1,0 +1,26 @@
+Phase: PostprocessingStem
+Input: Token EVENT
+Options: control = appelt
+
+
+Rule: EventStem
+({EVENT contains Token}): match
+-->
+:match {
+   AnnotationSet tokens = gate.Utils.getContainedAnnotations(inputAS, matchAnnots, "Token");
+   String stem = "";
+   for (Annotation token : tokens) {
+       FeatureMap fm = token.getFeatures();
+       if (fm.containsKey("root")) {
+       	  stem = fm.get("root").toString();
+       }
+
+       if (fm.containsKey("category") &&
+           fm.get("category").toString().startsWith("V") ) {
+          break;
+       }
+   }
+
+   matchAnnots.iterator().next().getFeatures().put("stem", stem);
+}
+

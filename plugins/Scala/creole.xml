@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<CREOLE-DIRECTORY VERSION="0.1" ID="com.jpetrak.gate.Scala"
+  DESCRIPTION="Provide support for using the Scala language with GATE"
+  HELPURL="https://github.com/johann-petrak/gateplugin-scala/wiki" >
+  <JAR SCAN="true">Scala.jar</JAR>
+  <JAR>lib/scala-compiler.jar</JAR> 
+  <JAR>lib/scala-library.jar</JAR>
+  <JAR>lib/scala-reflect.jar</JAR>
+  <JAR>lib/rsyntaxtextarea.jar</JAR>
+</CREOLE-DIRECTORY>

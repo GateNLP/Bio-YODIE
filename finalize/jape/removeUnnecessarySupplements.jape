@@ -1,0 +1,57 @@
+/*
+ * removeUnnecessarySupplements.jape
+ *
+ * Copyright (c) 1995-2016, The University of Sheffield. See the file
+ * COPYRIGHT.txt in the software or at
+ * http://gate.ac.uk/gate/COPYRIGHT.txt
+ *
+ * This file is part of Bio-YODIE (see 
+ * https://gate.ac.uk/applications/bio-yodie.html), and is free 
+ * software, licenced under the GNU Affero General Public License
+ * Version 3, 19 November 2007
+ *
+ * A copy of this licence is included in the distribution in the file
+ * LICENSE-AGPL3.html, and is also available at
+ * http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ *
+ * G. Gorrell, 26 September 2016
+ */
+
+
+
+Phase: removeUnnecessarySupplements
+Input: Mention
+Options: control = all
+
+Rule: removeUnnecessarySupplements
+({Mention}):m
+-->
+:m{
+  Annotation mention = gate.Utils.getOnlyAnn(mAnnots);
+  AnnotationSet typedAnns = gate.Utils.getCoextensiveAnnotations(inputAS, mention);
+  HashSet<String> typesCovered = new HashSet<String>();
+  HashSet<Annotation> toRemove = new HashSet<Annotation>();
+
+  //First get all the good UMLS annotations that we have
+  for(Annotation typedAnn : typedAnns){
+   if(typedAnn.getFeatures().get("inst")!=null){
+    typesCovered.add(typedAnn.getType());
+   }
+  }
+
+  //Now find the supplemental ones for which we have a better one
+  for(Annotation typedAnn : typedAnns){
+   if(typedAnn.getFeatures().get("inst")==null){
+    if(typesCovered.contains(typedAnn.getType())){
+     //We don't need it
+     toRemove.add(typedAnn);
+    }
+   }
+  }
+
+  //Now remove them
+  for(Annotation ann : toRemove){
+   inputAS.remove(ann);
+  }
+}
+
