@@ -26,7 +26,7 @@ SCRIPTDIR=`dirname "$PRG"`
 SCRIPTDIR=`cd "$SCRIPTDIR"; pwd -P`
 pushd "$SCRIPTDIR"
 tmpout=/tmp/`whoami`-compilePlugins$$.out
-for file in Java JdbcLookup Lang_French ModularPipelines Scala StringAnnotation Tagger_GATE-Time VirtualCorpus
+for file in Java JdbcLookup Lang_French ModularPipelines StringAnnotation Tagger_GATE-Time VirtualCorpus
 do
   if [ "$file" == ANNIE ] || [ ! -d "$file" ]
   then

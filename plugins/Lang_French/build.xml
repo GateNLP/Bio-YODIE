@@ -13,7 +13,7 @@
   <property name="doc.dir" location="doc" />
   <property name="javadoc.dir" location="${doc.dir}/javadoc" />
 
-  <property name="gate.home" location="../.." />
+  <property name="gate.home" location="../../../gate/gate-core" />
   <property name="gate.jar" location="${gate.home}/bin/gate.jar" />
   <property name="gate.lib" location="${gate.home}/lib" />
   <property name="gate.compile.maxwarnings" value="10000" />
