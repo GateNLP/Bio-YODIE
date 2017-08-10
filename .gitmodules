@@ -14,6 +14,3 @@
 [submodule "plugins/gateplugin-VirtualCorpus"]
 	path = plugins/gateplugin-VirtualCorpus
 	url = https://github.com/johann-petrak/gateplugin-VirtualCorpus.git
-[submodule "plugins/gateplugin-Scala"]
-	path = plugins/gateplugin-Scala
-	url = https://github.com/johann-petrak/gateplugin-Scala.git
