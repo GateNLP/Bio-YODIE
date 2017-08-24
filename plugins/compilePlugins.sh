@@ -1,10 +1,6 @@
 #!/bin/bash
 trap "exit" INT
-if [ "${GATE_HOME}" == "" ]
-then
-  echo Environment variable GATE_HOME not set
-  exit 1
-fi
+
 compile=1
 if [ "$1" == "clean" ]
 then
@@ -26,7 +22,7 @@ SCRIPTDIR=`dirname "$PRG"`
 SCRIPTDIR=`cd "$SCRIPTDIR"; pwd -P`
 pushd "$SCRIPTDIR"
 tmpout=/tmp/`whoami`-compilePlugins$$.out
-for file in Java JdbcLookup Lang_French ModularPipelines StringAnnotation Tagger_GATE-Time VirtualCorpus
+for file in gateplugin-Java gateplugin-JdbcLookup gateplugin-ModularPipelines gateplugin-StringAnnotation gateplugin-VirtualCorpus YodiePlugin
 do
   if [ "$file" == ANNIE ] || [ ! -d "$file" ]
   then

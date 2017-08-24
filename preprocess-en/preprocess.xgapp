@@ -16,12 +16,16 @@
       <gate.util.persistence.PersistenceManager-URLHolder>
         <urlString>$relpath$../plugins/gateplugin-VirtualCorpus</urlString>
       </gate.util.persistence.PersistenceManager-URLHolder>
-      <gate.util.persistence.PersistenceManager-URLHolder>
-        <urlString>$relpath$../plugins/Lang_French</urlString>
-      </gate.util.persistence.PersistenceManager-URLHolder>
-      <gate.util.persistence.PersistenceManager-URLHolder>
-        <urlString>$relpath$../plugins/Tagger_GATE-Time</urlString>
-      </gate.util.persistence.PersistenceManager-URLHolder>
+      <gate.creole.Plugin-Maven>
+        <group>uk.ac.gate.plugins</group>
+        <artifact>lang-french</artifact>
+        <version>8.5-SNAPSHOT</version>
+      </gate.creole.Plugin-Maven>
+      <gate.creole.Plugin-Maven>
+        <group>uk.ac.gate.plugins</group>
+        <artifact>tagger-gate-time</artifact>
+        <version>8.5-SNAPSHOT</version>
+      </gate.creole.Plugin-Maven>
       <gate.creole.Plugin-Maven>
         <group>uk.ac.gate.plugins</group>
         <artifact>annie</artifact>
@@ -39,8 +43,8 @@
       </gate.creole.Plugin-Maven>
       <gate.creole.Plugin-Maven>
         <group>uk.ac.gate.plugins</group>
-        <artifact>tagger-context</artifact>
-        <version>8.5-SNAPSHOT</version>
+        <artifact>context</artifact>
+        <version>1.0-SNAPSHOT</version>
       </gate.creole.Plugin-Maven>
       <gate.creole.Plugin-Maven>
         <group>uk.ac.gate.plugins</group>
@@ -137,9 +141,9 @@
               <localMap>
                 <entry>
                   <string>tokeniserRulesURL</string>
-                  <gate.util.persistence.PersistenceManager-URLHolder>
-                    <urlString>$relpath$../plugins/ANNIE/resources/tokeniser/AlternateTokeniser.rules</urlString>
-                  </gate.util.persistence.PersistenceManager-URLHolder>
+                  <gate.util.persistence.PersistenceManager-RRPersistence>
+                    <uriString>creole://uk.ac.gate.plugins;annie;8.5-SNAPSHOT/resources/tokeniser/AlternateTokeniser.rules</uriString>
+                  </gate.util.persistence.PersistenceManager-RRPersistence>
                 </entry>
                 <entry>
                   <string>encoding</string>
@@ -147,9 +151,9 @@
                 </entry>
                 <entry>
                   <string>transducerGrammarURL</string>
-                  <gate.util.persistence.PersistenceManager-URLHolder>
-                    <urlString>$relpath$../plugins/ANNIE/resources/tokeniser/postprocess.jape</urlString>
-                  </gate.util.persistence.PersistenceManager-URLHolder>
+                  <gate.util.persistence.PersistenceManager-RRPersistence>
+                    <uriString>creole://uk.ac.gate.plugins;annie;8.5-SNAPSHOT/resources/tokeniser/postprocess.jape</uriString>
+                  </gate.util.persistence.PersistenceManager-RRPersistence>
                 </entry>
               </localMap>
             </initParams>
@@ -199,12 +203,6 @@
                   <null/>
                 </entry>
                 <entry>
-                  <string>listsURL</string>
-                  <gate.util.persistence.PersistenceManager-URLHolder>
-                    <urlString>$relpath$../plugins/ANNIE/resources/gazetteer/lists.def</urlString>
-                  </gate.util.persistence.PersistenceManager-URLHolder>
-                </entry>
-                <entry>
                   <string>encoding</string>
                   <string>UTF-8</string>
                 </entry>
@@ -252,20 +250,8 @@
               <mapType>gate.util.SimpleFeatureMapImpl</mapType>
               <localMap>
                 <entry>
-                  <string>gazetteerListsURL</string>
-                  <gate.util.persistence.PersistenceManager-URLHolder>
-                    <urlString>$relpath$../plugins/ANNIE/resources/sentenceSplitter/gazetteer/lists.def</urlString>
-                  </gate.util.persistence.PersistenceManager-URLHolder>
-                </entry>
-                <entry>
                   <string>encoding</string>
                   <string>UTF-8</string>
-                </entry>
-                <entry>
-                  <string>transducerURL</string>
-                  <gate.util.persistence.PersistenceManager-URLHolder>
-                    <urlString>$relpath$../plugins/ANNIE/resources/sentenceSplitter/grammar/main.jape</urlString>
-                  </gate.util.persistence.PersistenceManager-URLHolder>
                 </entry>
               </localMap>
             </initParams>
@@ -399,18 +385,6 @@
                   <string>encoding</string>
                   <null/>
                 </entry>
-                <entry>
-                  <string>lexiconURL</string>
-                  <gate.util.persistence.PersistenceManager-URLHolder>
-                    <urlString>$relpath$../plugins/ANNIE/resources/heptag/lexicon</urlString>
-                  </gate.util.persistence.PersistenceManager-URLHolder>
-                </entry>
-                <entry>
-                  <string>rulesURL</string>
-                  <gate.util.persistence.PersistenceManager-URLHolder>
-                    <urlString>$relpath$../plugins/ANNIE/resources/heptag/ruleset</urlString>
-                  </gate.util.persistence.PersistenceManager-URLHolder>
-                </entry>
               </localMap>
             </initParams>
             <features class="gate.util.persistence.MapPersistence">
@@ -457,12 +431,6 @@
                 <entry>
                   <string>annotationAccessors</string>
                   <null/>
-                </entry>
-                <entry>
-                  <string>grammarURL</string>
-                  <gate.util.persistence.PersistenceManager-URLHolder>
-                    <urlString>$relpath$../plugins/ANNIE/resources/NE/main.jape</urlString>
-                  </gate.util.persistence.PersistenceManager-URLHolder>
                 </entry>
                 <entry>
                   <string>encoding</string>
@@ -519,18 +487,6 @@
             <initParams class="gate.util.persistence.MapPersistence">
               <mapType>gate.util.SimpleFeatureMapImpl</mapType>
               <localMap>
-                <entry>
-                  <string>posTagURL</string>
-                  <gate.util.persistence.PersistenceManager-URLHolder>
-                    <urlString>$relpath$../plugins/Tagger_NP_Chunking/pos_tag_dict</urlString>
-                  </gate.util.persistence.PersistenceManager-URLHolder>
-                </entry>
-                <entry>
-                  <string>rulesURL</string>
-                  <gate.util.persistence.PersistenceManager-URLHolder>
-                    <urlString>$relpath$../plugins/Tagger_NP_Chunking/rules</urlString>
-                  </gate.util.persistence.PersistenceManager-URLHolder>
-                </entry>
               </localMap>
             </initParams>
             <features class="gate.util.persistence.MapPersistence">
@@ -589,12 +545,6 @@
                 <entry>
                   <string>extLists</string>
                   <boolean>true</boolean>
-                </entry>
-                <entry>
-                  <string>definitionFileURL</string>
-                  <gate.util.persistence.PersistenceManager-URLHolder>
-                    <urlString>$relpath$../plugins/ANNIE/resources/othomatcher/listsNM.def</urlString>
-                  </gate.util.persistence.PersistenceManager-URLHolder>
                 </entry>
                 <entry>
                   <string>caseSensitive</string>
