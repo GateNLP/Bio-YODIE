@@ -63,7 +63,7 @@
       <include name="**/*.jar" />
       <include name="**/*.zip" />
     </fileset>
-    <fileset dir="${lib.dir}" includes="**/*.jar" />
+    <!-- <fileset dir="${lib.dir}" includes="**/*.jar" /> -->
     <pathelement location="${gate.plugin.jdbclookup.home}/gateplugin-JdbcLookup.jar" />
     <fileset dir="${gate.plugin.jdbclookup.home}/lib">
       <include name="**/*.jar"/>
