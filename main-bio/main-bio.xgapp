@@ -52,7 +52,7 @@
         <version>8.5-SNAPSHOT</version>
       </gate.creole.Plugin-Maven>
       <gate.util.persistence.PersistenceManager-URLHolder>
-        <urlString>$relpath$../../test2/plugins/YodiePlugin/</urlString>
+        <urlString>$relpath$../plugins/YodiePlugin/</urlString>
       </gate.util.persistence.PersistenceManager-URLHolder>
     </localList>
     <collectionType>java.util.Collections$UnmodifiableSet</collectionType>
