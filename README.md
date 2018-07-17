@@ -2,7 +2,7 @@
 
 Bio-YODIE is GATE's biomedical named entity linking pipeline.
 
-THIS VERSION WORKS FOR GATE 8.5 ONLY. Please contact us if you need run Bio-yodie on 8.4 or previous Gate version 
+THIS VERSION WORKS FOR GATE 8.6-SNAPSHOT ONLY. Please contact us if you need run Bio-yodie on 8.4 or previous Gate version 
 
 ## How to run Bio-YODIE
 
@@ -10,20 +10,7 @@ In order to run Bio-YODIE you will need to install GATE. See here for instructio
 
 https://gate.ac.uk/download/
 
-
-Having got YODIE you'll need to get its submodules. YODIE uses a variety of plugins that are stored in separate git repositories, because they are independent projects. YODIE contains a list of the ones it needs, though, so you can get them easily as follows:
-
-git pull --recurse-submodules=on-demand
-git submodule update --init --recursive
-
-Then you need set the environment variable, before compile all the plugins:
-
-export GATE_HOME=/path/to/gate/  
-
-After that you'll need to run plugins/compilePlugins.sh to compile the jar files for the plugins. (We don't ever check jar files into a git repository, so when you clone something from git you invariably need to compile it!) When you compile them, there will be some warnings but there shouldn't be any errors.
-
-plugins/compilePlugins.sh
-
+After that you'll need to run `ant jar` in `plugins/YodiePlugin` to compile the jar files for the YODIE plugin. (We don't ever check jar files into a git repository, so when you clone something from git you invariably need to compile it!) When you compile it, there will be some warnings but there shouldn't be any errors.
 
 Bio-YODIE consists of a number of sub-pipelines that between them make up the application. The main application is in the main-bio directory and is called "main-bio.xgapp". This is the application you need to run using GATE. The other subpipelines will automatically be called by it.
 
