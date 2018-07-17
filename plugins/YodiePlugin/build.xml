@@ -1,29 +1,35 @@
-<project name="YodiePlugin" basedir="." default="jar">
+<project name="YodiePlugin" basedir="." default="jar" xmlns:maven="antlib:org.eclipse.aether.ant">
 
   <property file="build.properties" />
 
   <!-- Name of the plugin -->
   <property name="plugin.name" value="YodiePlugin"/>
 
-  <!-- Make environment variables available -->
-  <property environment="env" />
+  <!-- download a copy of aether ant tasks if we don't have them already
+         NOTE: at some point switch to using Apache Maven Resolver for this -->
+  <get src="http://search.maven.org/remotecontent?filepath=org/eclipse/aether/aether-ant-tasks/1.0.0.v20140518/aether-ant-tasks-1.0.0.v20140518-uber.jar" dest="aether-ant-tasks-uber.jar" verbose="true" skipexisting="true" />
+  <fail message="Checksum mismatch for 'aether-ant-tasks-uber.jar'. Please delete it and rerun ant to redownload.">
+    <condition>
+      <not>
+        <checksum file="aether-ant-tasks-uber.jar" algorithm="SHA" property="95dadd03392a75564904da45108cf048abe6e5bb" verifyproperty="checksum.matches" />
+      </not>
+    </condition>
+  </fail>
 
-  <!-- If environment variable GATE_HOME is set, use it for
-       gate.home (unless it was already set in build.properties -->
-  <condition property="gate.home" value="${env.GATE_HOME}">
-    <isset property="env.GATE_HOME"/>
-  </condition>
+  <path id="aether-ant-tasks.classpath" path="aether-ant-tasks-uber.jar" />
+  <typedef resource="org/eclipse/aether/ant/antlib.xml" uri="antlib:org.eclipse.aether.ant" classpathref="aether-ant-tasks.classpath" />
 
-  <!-- If gate.home is not set from build.properties or the 
-       environment variable GATE_HOME, assume that this
-       plugin is in GATE Developer's plugin directory -->
-  <property name="gate.home" location="../.." />
-
-  <!-- location of GATE lib directory - should be inferred from gate.home -->
-  <property name="gate.lib" location="${gate.home}/lib" />
-
-  <!-- location of gate.jar - should be inferred from gate.home -->
-  <property name="gate.jar" location="${gate.home}/bin/gate.jar" />
+  <maven:resolve>
+    <maven:remoterepo url="http://repo.gate.ac.uk/content/groups/public" releases="false" updates="never" checksums="fail"> 
+      <maven:snapshots enabled="true" updates="always" /> 
+    </maven:remoterepo>
+    <maven:dependencies>
+      <maven:dependency groupid="uk.ac.gate" artifactid="gate-core" version="8.6-SNAPSHOT" />
+      <maven:dependency groupid="uk.ac.gate.plugins" artifactid="jdbclookup" version="0.3-SNAPSHOT" />
+    </maven:dependencies>
+    <path refid="gate.classpath" classpath="compile" />
+    <path refid="gate.runtime.classpath" classpath="runtime" />
+  </maven:resolve>
 
   <!-- Source directory - contains the Java source files for this plugin -->
   <property name="src.dir" location="src" />
@@ -45,31 +51,6 @@
   <!-- location for the generated JAR file -->
   <property name="jar.location" location="${plugin.name}.jar" />
 
-  <!-- NOTE: this plugin is dependent on the JdbcLookup plugin!!! 
-       At compile time, we assume that this plugin is either in ../JdbcLookup or
-       wherever gate.plugin.jdbclookup.home or GATE_PLUGIN_JDBCLOOKUP_HOME is pointing.
-       At runtime, the JdbcLookup plugin must be loaded before this plugin is loaded!
-  -->
-  <condition property="gate.plugin.jdbclookup.home" value="${env.GATE_PLUGIN_JDBCLOOKUP_HOME}">
-    <isset property="env.GATE_PLUGIN_JDBCLOOKUP_HOME"/>
-  </condition>
-  <property name="gate.plugin.jdbclookup.home" location="../gateplugin-JdbcLookup" />
-
-  <!-- Classpath to compile - includes gate.jar, GATE/lib/*.jar and any local
-       library JAR files. -->
-  <path id="compile.classpath">
-    <pathelement location="${gate.jar}" />
-    <fileset dir="${gate.lib}">
-      <include name="**/*.jar" />
-      <include name="**/*.zip" />
-    </fileset>
-    <!-- <fileset dir="${lib.dir}" includes="**/*.jar" /> -->
-    <pathelement location="${gate.plugin.jdbclookup.home}/gateplugin-JdbcLookup.jar" />
-    <fileset dir="${gate.plugin.jdbclookup.home}/lib">
-      <include name="**/*.jar"/>
-    </fileset>
-  </path>
-  
   <!--====================== Targets ============================-->
   
   <!-- create build directory structure -->
@@ -79,7 +60,7 @@
 
   <!-- compile the source -->
   <target name="compile" depends="prepare">
-    <javac classpathref="compile.classpath"
+    <javac classpathref="gate.classpath"
            srcdir="${src.dir}"
            destdir="${classes.dir}"
            debug="true"
@@ -140,7 +121,7 @@
 
   <target name="javadoc" depends="doc.prepare">
     <javadoc destdir="${javadoc.dir}" packagenames="*"
-             classpathref="compile.classpath"
+             classpathref="gate.classpath"
              encoding="UTF-8"
              windowtitle="${plugin.name} JavaDoc"
              source="1.5">

@@ -1,3 +1,4 @@
 <CREOLE-DIRECTORY>
+  <REQUIRES GROUP="uk.ac.gate.plugins" ARTIFACT="jdbclookup" VERSION="0.3-SNAPSHOT" />
   <JAR SCAN="true">YodiePlugin.jar</JAR>
 </CREOLE-DIRECTORY>
