@@ -1,16 +1,1 @@
 
-[submodule "plugins/gateplugin-JdbcLookup"]
-	path = plugins/gateplugin-JdbcLookup
-	url = https://github.com/johann-petrak/gateplugin-JdbcLookup.git
-[submodule "plugins/gateplugin-ModularPipelines"]
-	path = plugins/gateplugin-ModularPipelines
-	url = https://github.com/johann-petrak/gateplugin-ModularPipelines.git
-[submodule "plugins/gateplugin-Java"]
-	path = plugins/gateplugin-Java
-	url = https://github.com/johann-petrak/gateplugin-Java.git
-[submodule "plugins/gateplugin-StringAnnotation"]
-	path = plugins/gateplugin-StringAnnotation
-	url = https://github.com/johann-petrak/gateplugin-StringAnnotation.git
-[submodule "plugins/gateplugin-VirtualCorpus"]
-	path = plugins/gateplugin-VirtualCorpus
-	url = https://github.com/johann-petrak/gateplugin-VirtualCorpus.git
