@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <metadata xmlns="http://gate.ac.uk/ns/pipeline-metadata">
-  <pipeline-name>BioYODIE Named Entity Disambiguation</pipeline-name>
+  <pipeline-name>Bio-YODIE Named Entity Recognition</pipeline-name>
   <slug>bio-yodie</slug>
   <ordering>10</ordering>
   <annotation-selectors>Bio:Drug, Bio:Disease, Bio:Anatomy, Bio:Investigation, Bio:Care, Bio:Observation</annotation-selectors>
