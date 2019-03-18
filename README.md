@@ -4,6 +4,8 @@ Bio-YODIE is GATE's biomedical named entity linking pipeline.
 
 THIS VERSION WORKS FOR GATE 8.5 ONLY. Please contact us if you need run Bio-YODIE on 8.4 or previous Gate version 
 
+To reference Bio-YODIE please use [Gorrell et al. 2018](https://arxiv.org/abs/1811.04860).
+
 ## How to run Bio-YODIE
 
 In order to run Bio-YODIE you will need to install GATE. See here for instructions and downloads:
