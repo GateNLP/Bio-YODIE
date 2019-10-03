@@ -24,6 +24,9 @@ Then you need set the environment variable, before compiling all the plugins:
 
 `export GATE_HOME=/path/to/gate/`
 
+In preparation for the next step, make sure your version of Java is between 8 and 11 (inclusive). You can do this with the following command:
+`java --version`
+
 After that you'll need to run plugins/compilePlugins.sh to compile the jar files for the plugins. (We don't ever check jar files into a git repository, so when you clone something from git you invariably need to compile it!) When you compile them, there will be some warnings but there shouldn't be any errors.
 
 `plugins/compilePlugins.sh`
