@@ -7,24 +7,29 @@ THIS VERSION WORKS FOR GATE 8.5 ONLY. Please contact us if you need run Bio-YODI
 To reference Bio-YODIE please use [Gorrell et al. 2018](https://arxiv.org/abs/1811.04860).
 
 ## How to run Bio-YODIE
+Start by downloading or cloning this repository to the location of your choice.
 
 In order to run Bio-YODIE you will need to install GATE. See here for instructions and downloads:
 
 https://gate.ac.uk/download/
 
-
 Having got YODIE you'll need to get its submodules. YODIE uses a variety of plugins that are stored in separate git repositories, because they are independent projects. YODIE contains a list of the ones it needs, though, so you can get them easily as follows:
 
+```
 git pull --recurse-submodules=on-demand
 git submodule update --init --recursive
+```
 
-Then you need set the environment variable, before compile all the plugins:
+Then you need set the environment variable, before compiling all the plugins:
 
-export GATE_HOME=/path/to/gate/  
+`export GATE_HOME=/path/to/gate/`
+
+In preparation for the next step, make sure your version of Java is between 8 and 11 (inclusive). You can do this with the following command:
+`java --version`
 
 After that you'll need to run plugins/compilePlugins.sh to compile the jar files for the plugins. (We don't ever check jar files into a git repository, so when you clone something from git you invariably need to compile it!) When you compile them, there will be some warnings but there shouldn't be any errors.
 
-plugins/compilePlugins.sh
+`plugins/compilePlugins.sh`
 
 
 Bio-YODIE consists of a number of sub-pipelines that between them make up the application. The main application is in the main-bio directory and is called "main-bio.xgapp". This is the application you need to run using GATE. The other subpipelines will automatically be called by it.
